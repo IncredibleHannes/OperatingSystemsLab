@@ -73,7 +73,7 @@ void getparams(int argc, char **argv, char **inname)
 void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
 {
   printf(" inname: %s\n outname : %s\n", inname, outname);
-  if(strcmp(inname, outname)==0){
+  if (strcmp(inname, outname) == 0) {
      perror("Ein- und Ausgabepfad sind gleich");
       exit(EXIT_SUCCESS);
   }
@@ -126,7 +126,7 @@ void reverse(int infd, int outfd)
 
   //move to end of file
   int off_t = lseek(infd, ctr, SEEK_END);
-  if(off_t <0){
+  if (off_t <0) {
     perror("Error seeking end of Inputfile");
   }
 
@@ -159,8 +159,6 @@ void reverse(int infd, int outfd)
 
     ctr = ctr-1;
     off_t = lseek(infd, ctr, SEEK_END);
-
-
   }
 }
 

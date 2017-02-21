@@ -41,8 +41,7 @@ int main(int argc, char **argv)
     exit(EXIT_FAILURE);
   }
 
- printf("Time needed: %.2f\n", (double)(time(NULL) - starttime));
-
+  printf("Time needed: %.2f\n", (double)(time(NULL) - starttime));
   return EXIT_SUCCESS;
 }
 
@@ -92,7 +91,7 @@ void getparams(int argc, char **argv, size_t *buflen, char **inname,
 
 void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
 {
-  if(strcmp(inname, outname)==0){
+  if (strcmp(inname, outname) == 0 ) {
      perror("Ein- und Ausgabepfad sind gleich");
       exit(EXIT_SUCCESS);
   }
