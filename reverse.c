@@ -16,14 +16,14 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd);
 
 void reverse(int infd, int outfd);
 
-int askUsr(char* question);
+int askUsr(char const *question);
 
 int main(int argc, char **argv)
 {
   time_t starttime = time(NULL);
   char *inname;
   char *outname;
-  char *ending = ".rev";
+  char const *ending = ".rev";
   int infd;
   int outfd;
 
@@ -159,15 +159,15 @@ void reverse(int infd, int outfd)
 
     ctr = ctr-1;
     off_t = lseek(infd, ctr, SEEK_END);
-    
+
 
   }
 }
 
-int askUsr(char* question)
+int askUsr(char const *question)
 {
   char choice;
-    printf(question);
+    printf("%s",question);
     printf("Please enter [y]es or [n]o: ");
   while (1) {
     choice = getchar();
