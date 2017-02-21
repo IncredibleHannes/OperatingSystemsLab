@@ -10,12 +10,11 @@
 #include <time.h>
 #include <string.h>
 
-void getparams(int argc, char **argv, size_t *buflen, char **inname,
-               char **outname);
+void getparams(int argc, char **argv, char **inname);
 
 void getfilehandles(char *inname, char *outname, int *infd, int *outfd);
 
-void copy(int infd, int outfd, size_t buflen);
+void reverse(int infd, int outfd);
 
 int askUsr(char* question);
 
@@ -24,13 +23,14 @@ int main(int argc, char **argv)
   time_t starttime = time(NULL);
   char *inname;
   char *outname;
-  size_t buflen;
+
   int infd;
   int outfd;
 
-  getparams(argc, argv, &buflen, &inname, &outname);
+  getparams(argc, argv, &inname);
+  outname = strcat(inname, ".rev");
   getfilehandles(inname, outname, &infd, &outfd);
-  copy(infd, outfd, buflen);
+  reverse(infd, outfd);
   if (close(outfd) == -1) {
     perror("Fehler beim Schließen der Ausgabedatei");
     exit(EXIT_FAILURE);
@@ -46,36 +46,12 @@ int main(int argc, char **argv)
   return EXIT_SUCCESS;
 }
 
-void getparams(int argc, char **argv, size_t *buflen, char **inname,
-               char **outname)
+void getparams(int argc, char **argv, char **inname)
 {
   int opterrflag = 0;
-  int opt;
-
-  /* Standard-Wert */
-  *buflen = 1;
-
-  /* Kommandozeilenoptionen verarbeiten */
-  while ((opt = getopt(argc, argv, "b:")) != -1) {
-    switch (opt) {
-    case 'b':
-      opterrflag = sscanf(optarg, "%zu", buflen) != 1 || *buflen <= 0
-        || *buflen >= 1024 * 1024;
-      break;
-    case '?':
-      opterrflag = 1;
-      break;
-    }
-  }
 
   if (optind < argc) {
     *inname = argv[optind++];
-  } else {
-    opterrflag = 1;
-  }
-
-  if (optind < argc) {
-    *outname = argv[optind];
   } else {
     opterrflag = 1;
   }
@@ -128,7 +104,10 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
       close(*infd);
       exit(EXIT_SUCCESS);
     }
-  } else { 
+  } else {
+//     fseek(infd, 0L, SEEK_END);
+//     int size = ftell(infd);
+//     rewind(infd);
     *outfd = open(outname, O_CREAT | O_WRONLY, permissions.st_mode);
   }
   if (*outfd == -1) {
@@ -139,8 +118,9 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
 }
 
 
-void copy(int infd, int outfd, size_t buflen)
+void reverse(int infd, int outfd)
 {
+  int buflen = 1;
   char buffer[buflen];
   while (infd != EOF) {
     int readSize = read(infd, buffer, buflen);

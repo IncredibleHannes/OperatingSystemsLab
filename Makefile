@@ -1,2 +1,11 @@
-debug:
-gcc -O0 -g -Wall -std=c99 -o Testfile Testfile.c
+CC=gcc
+CFLAGS=-Wall -std=c99
+DEBUG=-O0 -g
+RELEASE=-O3
+all:
+	$(CC) $(CFLAGS) $(DEBUG) mycopy.c -o mycopy
+	$(CC) $(CFLAGS) $(DEBUG) reverse.c -o reverse
+clean:
+	rm -vfr *~ reverse mycopy
+
+
