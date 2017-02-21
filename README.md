@@ -4,7 +4,7 @@
 Es bricht mit Fehler ab!
 
 ## Weshalb ist es wichtig die Ausgangsdatei ausschließlich zum lesen und die Zieldatei ausschließlich zum schreiben zu öffnen?
-
+Dies ist wichtig um geordnet linear durch die Dateien zu iterieren. So wird vermieden, dass das Programm aus den Dateien sowohl liest als auch in sie hineinschreibt. Dadurch könnten sich die read/write pointer in den files ungewollt verschieben.
 ## Warum soll die Zeitmessung im tmp Verzeichnis durchgeführt werden?
 Das tmp Verzeichnis wird bei Neustart gelöscht und somit der auch die Testdateien.
 
