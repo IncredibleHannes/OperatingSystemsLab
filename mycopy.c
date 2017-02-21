@@ -1,5 +1,5 @@
 #define _POSIX_C_SOURCE 200112L
-
+//Team : Johannes Hartmann, Jonas Einig
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
