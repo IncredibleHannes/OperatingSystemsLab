@@ -23,12 +23,16 @@ int main(int argc, char **argv)
   time_t starttime = time(NULL);
   char *inname;
   char *outname;
-
+  char *ending = ".rev";
   int infd;
   int outfd;
 
   getparams(argc, argv, &inname);
-  outname = strcat(inname, ".rev");
+  outname = (char*)malloc(strlen(inname)+strlen(ending)+1);//+1 for the zero-terminator
+      //in real code you would check for errors in malloc here
+  strcpy(outname, inname);
+  strcat(outname, ending);
+
   getfilehandles(inname, outname, &infd, &outfd);
   reverse(infd, outfd);
   if (close(outfd) == -1) {
@@ -61,13 +65,14 @@ void getparams(int argc, char **argv, char **inname)
             "Benutzung:\n"
             "\n"
             "  %s [-b n] <Eingabedatei> <Ausgabedatei>\n"
-            "\n" "b[=1]: Puffergröße mit 0 < n <= 1024^2\n", argv[0]);
+            , argv[0]);
     exit(EXIT_FAILURE);
   }
 }
 
 void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
 {
+  printf(" inname: %s\n outname : %s\n", inname, outname);
   if(strcmp(inname, outname)==0){
      perror("Ein- und Ausgabepfad sind gleich");
       exit(EXIT_SUCCESS);
@@ -105,9 +110,6 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
       exit(EXIT_SUCCESS);
     }
   } else {
-//     fseek(infd, 0L, SEEK_END);
-//     int size = ftell(infd);
-//     rewind(infd);
     *outfd = open(outname, O_CREAT | O_WRONLY, permissions.st_mode);
   }
   if (*outfd == -1) {
@@ -120,9 +122,18 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
 
 void reverse(int infd, int outfd)
 {
+  int ctr = 0; // counter for iterating offset
+
+  //move to end of file
+  int off_t = lseek(infd, ctr, SEEK_END);
+  if(off_t <0){
+    perror("Error seeking end of Inputfile");
+  }
+
+
   int buflen = 1;
   char buffer[buflen];
-  while (infd != EOF) {
+  while (off_t >= 0) {
     int readSize = read(infd, buffer, buflen);
     if (readSize == -1) {
       perror("Error reading inputfile.");
@@ -130,6 +141,7 @@ void reverse(int infd, int outfd)
       close(outfd);
       exit(EXIT_FAILURE);
     }
+
     int  writeSize = write(outfd, buffer, readSize);
     if (writeSize == -1) {
       perror("Error writing outpfile");
@@ -137,15 +149,18 @@ void reverse(int infd, int outfd)
       close(outfd);
       exit(EXIT_FAILURE);
     }
+
     if (readSize != writeSize) {
       perror("Programm made mess");
       close(infd);
       close(outfd);
       exit(EXIT_FAILURE);
     }
-    if (readSize < buflen) {
-      break;
-    }
+
+    ctr = ctr-1;
+    off_t = lseek(infd, ctr, SEEK_END);
+    
+
   }
 }
 
