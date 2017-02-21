@@ -1,5 +1,6 @@
 # BetriebsystemePraktikumAufgabe1
-
+### Team
+Johannes Hartmann, Jonas Einig
 ## Wie verhält sich das Programm bei gleicher Eingabe und Ausgabe Datei?
 Es bricht mit Fehler ab!
 
