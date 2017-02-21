@@ -1,16 +1,8 @@
 #define _POSIX_C_SOURCE 200112L
 
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <time.h>
 #include <string.h>
-
-#include <sys/types.h>
 #include <dirent.h>
 
 void getparams(int argc, char **argv, int *mode, char **path);
@@ -75,8 +67,8 @@ void getdirhandler(char *path, DIR **dir)
 void printdir(DIR **dir, int mode, char *parentpath)
 {
   struct dirent *currentEntry = readdir(*dir);
-  while (currentEntry != NULL){
-    if(currentEntry->d_type == 4){
+  while (currentEntry != NULL) {
+    if (currentEntry->d_type == 4) {
       // print the diractory in fancy colouring
       printf("%s%s%s/\n", "\x1B[34m", currentEntry->d_name, "\x1B[0m");
     } else {
@@ -85,12 +77,11 @@ void printdir(DIR **dir, int mode, char *parentpath)
     currentEntry = readdir(*dir);
   }
   // recursive direcory printing
-  if(mode == 1){
-
+  if (mode == 1) {
     rewinddir(*dir);
     currentEntry = readdir(*dir);
 
-    while (currentEntry != NULL){
+    while (currentEntry != NULL) {
       // if currententy is directory and not one of "." or ".."
       if (currentEntry->d_type == 4 && (strcmp(currentEntry->d_name, ".") != 0)
           && (strcmp(currentEntry->d_name, "..") != 0)) {
