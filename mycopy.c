@@ -128,14 +128,7 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
       close(*infd);
       exit(EXIT_SUCCESS);
     }
-<<<<<<< HEAD
-  } else { 
-=======
   } else {
-//     fseek(infd, 0L, SEEK_END);
-//     int size = ftell(infd);
-//     rewind(infd);
->>>>>>> bb35135c8df68b4e3b4b078df9f45c1f9011a094
     *outfd = open(outname, O_CREAT | O_WRONLY, permissions.st_mode);
   }
   if (*outfd == -1) {
