@@ -10,9 +10,11 @@ Das tmp Verzeichnis wird bei Neustart gelöscht und somit der auch die Testdatei
 
 ## Zeitmessungen:
 getestet auf I7 neuerer Generation
-+------------------+---------------+  
+
+
+
 | buffersize       | zeit in s     |  
-+------------------+---------------+  
+|------------------|---------------|  
 | 1                | 42s           |  
 | 2                | 21s           |  
 | 4                | 11s           |  
@@ -22,4 +24,3 @@ getestet auf I7 neuerer Generation
 | 64               | 0s            |  
 | ...              | 0s            |  
 | 65536            | 0s            |  
-+------------------+---------------+  
