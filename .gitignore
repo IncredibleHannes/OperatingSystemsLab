@@ -31,3 +31,11 @@
 # Debug files
 *.dSYM/
 *.su
+
+#binary files
+reverse
+mycopy
+
+#testfiles
+*.rev
+*.txt
