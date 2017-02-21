@@ -17,7 +17,7 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd);
 
 void copy(int infd, int outfd, size_t buflen);
 
-int askUsr(char* question);
+int askUsr(char const * question);
 
 int main(int argc, char **argv)
 {
@@ -40,7 +40,7 @@ int main(int argc, char **argv)
     perror("Fehler beim Schließen der Eingabedatei");
     exit(EXIT_FAILURE);
   }
-    
+
  printf("Time needed: %.2f\n", (double)(time(NULL) - starttime));
 
   return EXIT_SUCCESS;
@@ -107,7 +107,7 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
     perror("Eingabedatei nicht gefunden");
     exit(EXIT_FAILURE);
   }
-  
+
   // reading permissions of the input file descriptor
   struct stat permissions;
   if (stat(inname, &permissions) == -1) {
@@ -115,7 +115,7 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
     close(*infd);
     exit(EXIT_FAILURE);
   }
- 
+
   // open the output file
   if (access(outname, F_OK) != -1) {
     int a = askUsr("Möchten Sie die bestehende Datei ersetzen?\n");
@@ -131,7 +131,7 @@ void getfilehandles(char *inname, char *outname, int *infd, int *outfd)
   } else {
 //     fseek(infd, 0L, SEEK_END);
 //     int size = ftell(infd);
-//     rewind(infd); 
+//     rewind(infd);
     *outfd = open(outname, O_CREAT | O_WRONLY, permissions.st_mode);
   }
   if (*outfd == -1) {
@@ -152,7 +152,7 @@ void copy(int infd, int outfd, size_t buflen)
       close(infd);
       close(outfd);
       exit(EXIT_FAILURE);
-    }    
+    }
     int  writeSize = write(outfd, buffer, readSize);
     if (writeSize == -1) {
       perror("Error writing outpfile");
@@ -166,16 +166,16 @@ void copy(int infd, int outfd, size_t buflen)
       close(outfd);
       exit(EXIT_FAILURE);
     }
-    if (readSize < buflen) {
+    if (readSize < (int)buflen) {
       break;
     }
   }
 }
 
-int askUsr(char* question)
+int askUsr(char const * question)
 {
   char choice;
-    printf(question);
+    printf("%p", question);
     printf("Please enter [y]es or [n]o: ");
   while (1) {
     choice = getchar();
