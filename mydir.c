@@ -80,25 +80,23 @@ void printdir(DIR **dir, int mode, char *parentpath)
     if (mode == 1) {
         rewinddir(*dir);
         currentEntry = readdir(*dir);
-
+        char *path = (char *) malloc(255);
         while (currentEntry != NULL) {
             // if currententy is directory and not one of "." or ".."
             if (currentEntry->d_type == 4 && (strcmp(currentEntry->d_name, ".") != 0)
                     && (strcmp(currentEntry->d_name, "..") != 0)) {
                 // build new path string and open subdirectory
-                char *path = (char *) malloc(strlen(parentpath) +
-                                             strlen(currentEntry->d_name) + 2);
-                strcat(path, parentpath);
-                strcat(path, "/");
-                strcat(path, currentEntry->d_name);
+                sprintf(path, "%s/%s", parentpath, currentEntry->d_name);
                 DIR *newdir;
                 getdirhandler(path, &newdir);
                 // print headline
                 printf("\n%s:\n", path);
                 // recursive call of printdir
                 printdir(&newdir, mode, path);
+                closedir(newdir);
             }
             currentEntry = readdir(*dir);
         }
+        free(path);
     }
 }
