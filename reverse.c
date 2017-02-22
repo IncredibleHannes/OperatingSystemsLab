@@ -29,8 +29,8 @@ int main(int argc, char **argv)
   int outfd;
 
   getparams(argc, argv, &inname);
-  outname = (char*)malloc(strlen(inname)+strlen(ending)+1);//+1 for the zero-terminator
-      //in real code you would check for errors in malloc here
+  outname = (char*)malloc(strlen(inname)+strlen(ending)+1);
+  
   strcpy(outname, inname);
   strcat(outname, ending);
 
