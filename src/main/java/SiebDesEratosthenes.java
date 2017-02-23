@@ -29,7 +29,10 @@ public class SiebDesEratosthenes {
         for(int i = 2; i <= n; i++){
             test.values.add(i);
         }
-        test.notify();
+        synchronized (test.values){
+            test.values.notify();
+        }
+
     }
 
 
@@ -45,20 +48,22 @@ public class SiebDesEratosthenes {
         Worker(int n, int prime){
             this.n = n;
             this.prime = prime;
-            values = new Pipeline(this);
+            values = new Pipeline();
         }
 
 
         @Override
-        public synchronized void run() {
+        public void run() {
             System.out.println("run entered");
             while(!stopped){
-                try {
-                    System.out.println("start waiting");
-                    this.wait();
-                    System.out.println("end Waiting");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                synchronized (this.values){
+                    try {
+                        System.out.println("start waiting");
+                        this.values.wait();
+                        System.out.println("end Waiting");
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 while(!values.isEmpty()){
                     this.checkValue();
@@ -91,25 +96,25 @@ public class SiebDesEratosthenes {
                 child.end();
             }
             this.stopped = true;
-            this.notify();
+            synchronized (values){
+                values.notify();
+            }
         }
 
     }
 
     private class Pipeline{
-        private ArrayDeque<Integer> elements = new ArrayDeque<Integer>();
-        private Worker owner;
+        private ArrayDeque<Integer> elements = new ArrayDeque<>();
 
-        Pipeline(Worker _owner){
-            this.owner = _owner;
-        }
         int getNext(){
          return elements.pop();
         }
 
         void add(int newVal){
-            elements.push(newVal);
-            owner.notify();
+            synchronized (this){
+                elements.push(newVal);
+                this.notify();
+            }
         }
 
         boolean isEmpty(){
