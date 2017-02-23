@@ -22,27 +22,23 @@ public class SiebDesEratosthenes {
 
 
     public SiebDesEratosthenes(int n) {
-        System.out.println("current n: " + n);
-
         Worker test = new Worker(n, 2);
-        test.run();
-        for(int i = 2; i <= n; i++){
+        test.start();
+        for(int i = 2; i <= n+1; i++){
             test.values.add(i);
         }
-        synchronized (test.values){
-            test.values.notify();
-        }
+        test.parentStopped = true;
 
     }
 
 
 
-    private class Worker implements Runnable{
+    private class Worker extends Thread{
         private Worker child;
         private int n;
         private int prime;
         Pipeline values;
-        private boolean stopped = false;
+        private boolean parentStopped = false;
 
 
         Worker(int n, int prime){
@@ -54,36 +50,23 @@ public class SiebDesEratosthenes {
 
         @Override
         public void run() {
-            System.out.println("run entered");
-            while(!stopped){
-                synchronized (this.values){
-                    try {
-                        System.out.println("start waiting");
-                        this.values.wait();
-                        System.out.println("end Waiting");
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                while(!values.isEmpty()){
-                    this.checkValue();
-                }
+            while(!parentStopped || !values.isEmpty()){
+               this.checkValue();
             }
-
-            System.out.println("run stopped");
-
         }
 
         private void checkValue() {
-            int k =values.getNext();
-            if(k <= n ) {
+            int k =values.getNext(parentStopped);
 
+            if(k <= n ) {
                 if (k % prime != 0) {
-                    if (child == null && (Math.pow(k, 2) < n)) {
+                    if (child == null) {
+                        System.out.println("child sporned");
                         child = new Worker(n, k);
-                    } else {
+                        child.start();
+                    } else {//(Math.pow(k, 2) < n)
                         child.values.add(k);
-                    }
+                    }//2 3 5 7 11 13 17
                 }
             }else{
                 this.end();
@@ -91,13 +74,14 @@ public class SiebDesEratosthenes {
         }
 
         void end(){
-            System.out.println( prime + ", ");
+
+            System.out.print( prime + ", ");
             if(child != null){
-                child.end();
-            }
-            this.stopped = true;
-            synchronized (values){
-                values.notify();
+                synchronized (child.values){
+                    child.parentStopped = true;
+                    child.end();
+                    child.values.notifyAll();
+                }
             }
         }
 
@@ -106,15 +90,20 @@ public class SiebDesEratosthenes {
     private class Pipeline{
         private ArrayDeque<Integer> elements = new ArrayDeque<>();
 
-        int getNext(){
-         return elements.pop();
+        synchronized int getNext(boolean stopped){
+            while(elements.isEmpty() && !stopped ){
+                try {
+                    wait();
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+            return elements.poll();
         }
 
-        void add(int newVal){
-            synchronized (this){
-                elements.push(newVal);
-                this.notify();
-            }
+        synchronized void add(int newVal){
+            elements.add(newVal);
+            notifyAll();
         }
 
         boolean isEmpty(){
