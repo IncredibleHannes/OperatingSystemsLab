@@ -51,22 +51,33 @@ public class SiebDesEratosthenes {
         @Override
         public void run() {
             while(!parentStopped || !values.isEmpty()){
-               this.checkValue();
+                this.checkValue();
+            }
+
+            System.out.print( prime + ", ");
+
+            if(child != null){
+
+                child.parentStopped = true;
+                synchronized (child.values){
+                    child.values.notifyAll();
+                }
             }
         }
+
 
         private void checkValue() {
             int k =values.getNext(parentStopped);
 
-            if(k <= n ) {
+            if(k <= n && k != -1) {
                 if (k % prime != 0) {
                     if (child == null) {
-                        System.out.println("child sporned");
+                     //   System.out.println("child spawned: " + k);
                         child = new Worker(n, k);
                         child.start();
                     } else {//(Math.pow(k, 2) < n)
                         child.values.add(k);
-                    }//2 3 5 7 11 13 17
+                    }
                 }
             }else{
                 this.end();
@@ -75,11 +86,9 @@ public class SiebDesEratosthenes {
 
         void end(){
 
-            System.out.print( prime + ", ");
             if(child != null){
                 synchronized (child.values){
                     child.parentStopped = true;
-                    child.end();
                     child.values.notifyAll();
                 }
             }
@@ -90,15 +99,19 @@ public class SiebDesEratosthenes {
     private class Pipeline{
         private ArrayDeque<Integer> elements = new ArrayDeque<>();
 
-        synchronized int getNext(boolean stopped){
-            while(elements.isEmpty() && !stopped ){
+        synchronized int getNext(boolean pStopped){
+            while(elements.isEmpty() && !pStopped ){
                 try {
                     wait();
                 }catch (InterruptedException e){
                     e.printStackTrace();
                 }
             }
-            return elements.poll();
+            if(!elements.isEmpty()){
+                return elements.poll();
+            } else {
+              return -1;
+            }
         }
 
         synchronized void add(int newVal){
