@@ -27,7 +27,7 @@ public class SiebDesEratosthenes {
         for(int i = 2; i <= n+1; i++){
             test.values.add(i);
         }
-        test.parentStopped = true;
+        test.values.parentStopped = true;
 
     }
 
@@ -38,7 +38,6 @@ public class SiebDesEratosthenes {
         private int n;
         private int prime;
         Pipeline values;
-        private boolean parentStopped = false;
 
 
         Worker(int n, int prime){
@@ -50,7 +49,7 @@ public class SiebDesEratosthenes {
 
         @Override
         public void run() {
-            while(!parentStopped || !values.isEmpty()){
+            while(!values.parentStopped || !values.isEmpty()){
                 this.checkValue();
             }
 
@@ -58,7 +57,7 @@ public class SiebDesEratosthenes {
 
             if(child != null){
 
-                child.parentStopped = true;
+                child.values.parentStopped = true;
                 synchronized (child.values){
                     child.values.notifyAll();
                 }
@@ -67,7 +66,7 @@ public class SiebDesEratosthenes {
 
 
         private void checkValue() {
-            int k =values.getNext(parentStopped);
+            int k =values.getNext();
 
             if(k <= n && k != -1) {
                 if (k % prime != 0) {
@@ -88,7 +87,7 @@ public class SiebDesEratosthenes {
 
             if(child != null){
                 synchronized (child.values){
-                    child.parentStopped = true;
+                    child.values.parentStopped = true;
                     child.values.notifyAll();
                 }
             }
@@ -98,9 +97,10 @@ public class SiebDesEratosthenes {
 
     private class Pipeline{
         private ArrayDeque<Integer> elements = new ArrayDeque<>();
+        public boolean parentStopped = false;
 
-        synchronized int getNext(boolean pStopped){
-            while(elements.isEmpty() && !pStopped ){
+        synchronized int getNext(){
+            while(elements.isEmpty() && !parentStopped ){
                 try {
                     wait();
                 }catch (InterruptedException e){
