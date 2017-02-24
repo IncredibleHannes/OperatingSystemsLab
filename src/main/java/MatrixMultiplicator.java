@@ -31,29 +31,21 @@ public class MatrixMultiplicator {
 
         ArrayBlockingQueue<Runnable> tasks = new ArrayBlockingQueue<Runnable>(matrix.length * matrix.length);
 
+        ThreadPoolExecutor tpe = new ThreadPoolExecutor( 4, 8, 0, TimeUnit.SECONDS, tasks);
 
         for(int i = 0; i < matrix.length; i++)
             for(int j = 0; j < matrix.length; j++)
-                tasks.add(new Multiplicator( i, j, matrix.length));
+                tpe.execute(new Multiplicator( i, j, matrix.length));
 
 
-        ThreadPoolExecutor tpe = new ThreadPoolExecutor( 4, 8, 0, TimeUnit.SECONDS, tasks);
-
-        while(tpe.getTaskCount() > 0){
-
-        }
-        try {
-            tpe.awaitTermination(1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         prettyPrintMatrix(result);
+
 
     }
 
     private void prettyPrintMatrix(double[][] data) {
-        for(int j = 0; j < matrix.length; j++) {
-            for (int i = 0; i < matrix.length; i++)
+        for(int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix.length; j++)
                 System.out.print(data[i][j] + ", ");
 
             System.out.println();
