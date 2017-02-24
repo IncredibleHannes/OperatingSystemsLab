@@ -8,14 +8,22 @@ public class SiebDesEratosthenes {
 
     public static void main(String[] args) {
         int n = 0;
-        if(args.length == 1) {
-            n = Integer.parseInt(args[0]);
-        } else {
-            //read from console
-            System.out.println("Bis zu welcher oberen Grenze sollen Primzahlen berechnet werden?");
-            Scanner scanner = new Scanner(System.in);
-            n = Integer.parseInt(scanner.next());
+        try {
+            if(args.length == 1) {
+                n = Integer.parseInt(args[0]);
+            } else {
+                //read from console
+                System.out.println("Bis zu welcher oberen Grenze sollen Primzahlen berechnet werden?");
+                Scanner scanner = new Scanner(System.in);
+                n = Integer.parseInt(scanner.next());
+            }
+
+            if(n < 2) throw new IllegalArgumentException("illegal input");
+        } catch (Exception e) {
+            System.out.println("Falsche Eingabeparameter - Bitte eine Ganzzahl (>=2) eingeben");
+            System.exit(1);
         }
+
         SiebDesEratosthenes sde = new SiebDesEratosthenes(n);
     }
 
