@@ -21,7 +21,7 @@ public class MatrixMultiplicator {
     private final double[][] result;
     private final double[][] matrix;
 
-    public MatrixMultiplicator(double [][] matrix){
+    private MatrixMultiplicator(double[][] matrix){
         assert(matrix != null);
         assert(matrix.length == matrix[0].length);
         assert(0 < matrix.length && matrix.length < 10 );
@@ -29,7 +29,7 @@ public class MatrixMultiplicator {
         this.matrix = matrix;
         this.result = new double[matrix.length][matrix.length];
 
-        ArrayBlockingQueue<Runnable> tasks = new ArrayBlockingQueue<Runnable>(matrix.length * matrix.length);
+        ArrayBlockingQueue<Runnable> tasks = new ArrayBlockingQueue<>(matrix.length * matrix.length);
 
         int sysCores = Runtime.getRuntime().availableProcessors();
         ThreadPoolExecutor tpe = new ThreadPoolExecutor( sysCores, sysCores, 0, TimeUnit.SECONDS, tasks);
@@ -61,7 +61,7 @@ public class MatrixMultiplicator {
         private final int j;
         private final int n;
 
-        public Multiplicator(int i, int j, int n) {
+        Multiplicator(int i, int j, int n) {
             this.i = i;
             this.j = j;
             this.n = n;

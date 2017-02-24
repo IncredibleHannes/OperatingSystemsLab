@@ -1,8 +1,5 @@
 package main.java;
 
-import com.sun.java.swing.plaf.motif.MotifBorders;
-import com.sun.xml.internal.ws.api.model.MEP;
-
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -25,7 +22,7 @@ public class CoreOrientedMatrixMultiplicator {
     private final double[][] result;
     private final double[][] matrix;
 
-    public CoreOrientedMatrixMultiplicator(double [][] matrix){
+    private CoreOrientedMatrixMultiplicator(double[][] matrix){
         assert(matrix != null);
         assert(matrix.length == matrix[0].length);
         assert(0 < matrix.length && matrix.length < 10 );
@@ -33,7 +30,7 @@ public class CoreOrientedMatrixMultiplicator {
         this.matrix = matrix;
         this.result = new double[matrix.length][matrix.length];
 
-        ArrayBlockingQueue<Runnable> tasks = new ArrayBlockingQueue<Runnable>(matrix.length * matrix.length);
+        ArrayBlockingQueue<Runnable> tasks = new ArrayBlockingQueue<>(matrix.length * matrix.length);
 
         int sysCores = Runtime.getRuntime().availableProcessors();
         ThreadPoolExecutor tpe = new ThreadPoolExecutor( sysCores, sysCores, 0, TimeUnit.SECONDS, tasks);
@@ -82,7 +79,7 @@ public class CoreOrientedMatrixMultiplicator {
         private final ArrayList<MatrixEntry> workEntries = new ArrayList<>();
         private final int n;
 
-        public MultiMultiplicator(ArrayList<MatrixEntry> workEntries, int n) {
+        MultiMultiplicator(ArrayList<MatrixEntry> workEntries, int n) {
             this.workEntries.addAll(workEntries);
             this.n = n;
         }
@@ -102,9 +99,9 @@ public class CoreOrientedMatrixMultiplicator {
     }
 
     private class MatrixEntry{
-        public final int fst;
-        public final int snd;
-        public MatrixEntry(int f, int s){
+        final int fst;
+        final int snd;
+        MatrixEntry(int f, int s){
             fst = f;
             snd = s;
         }
