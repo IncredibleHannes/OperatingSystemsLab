@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by jonas on 23.02.17.
  */
-public class MatrixMultiplicator {
+public class CoreOrientedMatrixMultiplicator {
 
     public static void main(String[] args) {
         double [][] a = {{ 1, 2, 3, 4, 5},
@@ -15,13 +15,13 @@ public class MatrixMultiplicator {
                          { 1, 2, 3, 4, 5},
                          { 6, 7, 8, 9, 10},
                          { 1, 2, 3, 4, 5} };
-        new MatrixMultiplicator(a);
+        new CoreOrientedMatrixMultiplicator(a);
     }
 
     private final double[][] result;
     private final double[][] matrix;
 
-    public MatrixMultiplicator(double [][] matrix){
+    public CoreOrientedMatrixMultiplicator(double [][] matrix){
         assert(matrix != null);
         assert(matrix.length == matrix[0].length);
         assert(0 < matrix.length && matrix.length < 10 );
@@ -31,8 +31,7 @@ public class MatrixMultiplicator {
 
         ArrayBlockingQueue<Runnable> tasks = new ArrayBlockingQueue<Runnable>(matrix.length * matrix.length);
 
-        int sysCores = Runtime.getRuntime().availableProcessors();
-        ThreadPoolExecutor tpe = new ThreadPoolExecutor( sysCores, sysCores, 0, TimeUnit.SECONDS, tasks);
+        ThreadPoolExecutor tpe = new ThreadPoolExecutor( 4, 8, 0, TimeUnit.SECONDS, tasks);
 
         for(int i = 0; i < matrix.length; i++)
             for(int j = 0; j < matrix.length; j++)
