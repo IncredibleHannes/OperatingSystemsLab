@@ -18,6 +18,7 @@ public class SiebDesEratosthenes {
     }
 
     public static void main(String[] args) {
+
         int n = 0;
         try {
             if (args.length == 1) {
@@ -35,7 +36,7 @@ public class SiebDesEratosthenes {
             System.exit(1);
         }
 
-        SiebDesEratosthenes sde = new SiebDesEratosthenes(n);
+        new SiebDesEratosthenes(n);
     }
 
     private class Worker extends Thread {
