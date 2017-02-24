@@ -40,6 +40,8 @@ public class MatrixMultiplicator {
 
         prettyPrintMatrix(result);
 
+        tpe.shutdown();
+
 
     }
 
