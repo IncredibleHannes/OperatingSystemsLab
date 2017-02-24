@@ -1,5 +1,9 @@
 package main.java;
 
+import com.sun.java.swing.plaf.motif.MotifBorders;
+import com.sun.xml.internal.ws.api.model.MEP;
+
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -31,11 +35,30 @@ public class CoreOrientedMatrixMultiplicator {
 
         ArrayBlockingQueue<Runnable> tasks = new ArrayBlockingQueue<Runnable>(matrix.length * matrix.length);
 
-        ThreadPoolExecutor tpe = new ThreadPoolExecutor( 4, 8, 0, TimeUnit.SECONDS, tasks);
+        int sysCores = Runtime.getRuntime().availableProcessors();
+        ThreadPoolExecutor tpe = new ThreadPoolExecutor( sysCores, sysCores, 0, TimeUnit.SECONDS, tasks);
 
+        ArrayList<MatrixEntry> allEntries = new ArrayList<>();
         for(int i = 0; i < matrix.length; i++)
             for(int j = 0; j < matrix.length; j++)
-                tpe.execute(new Multiplicator( i, j, matrix.length));
+                allEntries.add(new MatrixEntry(i,j));
+
+
+        ArrayList< ArrayList<MatrixEntry> > workTasks = new ArrayList<>();
+
+        for(int i = 0 ; i < sysCores ; i++)
+            workTasks.add(new ArrayList<MatrixEntry>());
+
+        int ctr = 0 ;
+        for (MatrixEntry me : allEntries) {
+            workTasks.get(ctr).add(me);
+            ctr = (ctr +1) % sysCores;
+        }
+
+        for(int i = 0 ; i < sysCores ; i++){
+            tpe.execute(new MultiMultiplicator( workTasks.get(i) , matrix.length));
+        }
+
 
 
         prettyPrintMatrix(result);
@@ -54,27 +77,36 @@ public class CoreOrientedMatrixMultiplicator {
         }
     }
 
-    private class Multiplicator implements Runnable {
+    private class MultiMultiplicator implements Runnable {
 
-        private final int i;
-        private final int j;
+        private final ArrayList<MatrixEntry> workEntries = new ArrayList<>();
         private final int n;
 
-        public Multiplicator(int i, int j, int n) {
-            this.i = i;
-            this.j = j;
+        public MultiMultiplicator(ArrayList<MatrixEntry> workEntries, int n) {
+            this.workEntries.addAll(workEntries);
             this.n = n;
         }
 
         @Override
         public void run() {
-            double res = 0;
-            for(int k = 0; k < n; k++){
-                res += matrix[i][k] * matrix[k][j];
+            for (MatrixEntry me : this.workEntries) {
+                double res = 0;
+                for(int k = 0; k < n; k++){
+                    res += matrix[me.fst][k] * matrix[k][me.snd];
+                }
+                synchronized (result){
+                    result[me.fst][me.snd] = res;
+                }
             }
-            synchronized (result){
-                result[i][j] = res;
-            }
+        }
+    }
+
+    private class MatrixEntry{
+        public final int fst;
+        public final int snd;
+        public MatrixEntry(int f, int s){
+            fst = f;
+            snd = s;
         }
     }
 
