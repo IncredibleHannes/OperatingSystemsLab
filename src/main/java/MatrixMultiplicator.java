@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by jonas on 23.02.17.
+ * Johannes Hartmann, Jonas Einig
  */
 public class MatrixMultiplicator {
 
