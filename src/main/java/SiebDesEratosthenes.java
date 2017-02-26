@@ -3,6 +3,9 @@ package main.java;
 import java.util.ArrayDeque;
 import java.util.Scanner;
 
+/**
+ * Johannes Hartmann, Jonas Einig
+ */
 public class SiebDesEratosthenes {
 
     private int n;
