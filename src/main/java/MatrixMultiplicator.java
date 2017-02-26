@@ -1,5 +1,6 @@
 package main.java;
 
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -18,6 +19,12 @@ public class MatrixMultiplicator {
 
     private final double[][] result;
     private final double[][] matrix;
+
+    /**
+     * mode == true : One task is produced for every value that has to be calculated
+     * mode == false : One task is produced for every core of the ThreadPoolExecutor (respectively for each logical Processor)
+     */
+    static final boolean mode = true;
 
     public static void main(String[] args) {
         new MatrixMultiplicator(testMatrix);
@@ -38,15 +45,27 @@ public class MatrixMultiplicator {
         this.result = new double[matrix.length][matrix.length];
 
         int sysCores = Runtime.getRuntime().availableProcessors();
-        // TODO: Fragen!
-        ThreadPoolExecutor tpe = new ThreadPoolExecutor(sysCores, sysCores, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(matrix.length * matrix.length));
+        ThreadPoolExecutor tpe;
+        if (mode) { //one task for each value
+            tpe = new ThreadPoolExecutor(sysCores, sysCores, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(matrix.length * matrix.length));
+            executeOneValOneTask(tpe);
+        } else { // one task for each core
+            tpe = new ThreadPoolExecutor(sysCores, sysCores, 0, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(sysCores));
+            executeOneCoreOneTask(sysCores, tpe);
+        }
+        prettyPrintMatrix(result);
+        tpe.shutdown();
+    }
 
+    /*#######OneValOneTask#####*/
+
+    /**
+     * generates one task for each value in result matrix
+     * */
+    private void executeOneValOneTask(ThreadPoolExecutor tpe) {
         for (int i = 0; i < matrix.length; i++)
             for (int j = 0; j < matrix.length; j++)
                 tpe.execute(new Multiplicator(i, j, matrix.length));
-
-        prettyPrintMatrix(result);
-        tpe.shutdown();
     }
 
     private class Multiplicator implements Runnable {
@@ -72,6 +91,73 @@ public class MatrixMultiplicator {
             }
         }
     }
+
+    /*######OneTaskPerCore########*/
+
+    /**
+     * generates one Task for each core in the ThreadPoolExecutor
+     * */
+    private void executeOneCoreOneTask(int sysCores, ThreadPoolExecutor tpe) {
+//        create all computations
+        ArrayList<MatrixEntry> allEntries = new ArrayList<>();
+        for (int i = 0; i < matrix.length; i++)
+            for (int j = 0; j < matrix.length; j++)
+                allEntries.add(new MatrixEntry(i, j));
+
+
+        ArrayList<ArrayList<MatrixEntry>> workTasks = new ArrayList<>();
+        //create actual workTasks
+        for (int i = 0; i < sysCores; i++)
+            workTasks.add(new ArrayList<MatrixEntry>());
+
+        //fill workTasks with content -- round robin
+        int ctr = 0;
+        for (MatrixEntry me : allEntries) {
+            workTasks.get(ctr).add(me);
+            ctr = (ctr + 1) % sysCores;
+        }
+
+        for (int i = 0; i < sysCores; i++) {
+            tpe.execute(new MultiMultiplicator(workTasks.get(i), matrix.length));
+        }
+    }
+
+
+    private class MultiMultiplicator implements Runnable {
+
+        private final ArrayList<MatrixEntry> workEntries = new ArrayList<>();
+        private final int matrixSize;
+
+        MultiMultiplicator(ArrayList<MatrixEntry> workEntries, int n) {
+            this.workEntries.addAll(workEntries);
+            this.matrixSize = n;
+        }
+
+        @Override
+        public void run() {
+            for (MatrixEntry me : this.workEntries) {
+                double res = 0;
+                for (int k = 0; k < matrixSize; k++) {
+                    res += matrix[me.fst][k] * matrix[k][me.snd];
+                }
+                synchronized (result) {
+                    result[me.fst][me.snd] = res;
+                }
+            }
+        }
+    }
+
+    private class MatrixEntry {
+        final int fst;
+        final int snd;
+
+        MatrixEntry(int f, int s) {
+            this.fst = f;
+            this.snd = s;
+        }
+    }
+
+    //#######PRINTING###########
 
     // Super magic pretty print!
     static void prettyPrintMatrix(double[][] data) {
