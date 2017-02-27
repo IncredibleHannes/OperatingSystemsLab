@@ -16,6 +16,15 @@ struct task {
 
 void *perform_work(void *argument)
 {
+    struct task  *argValue = (struct task*) argument;
+
+    argValue->result = 0;
+    for(int k = 0; k < MATRIX_SIZE; k++){
+
+          argValue->result = argValue->result + argValue->matrix[argValue->i][k] *  argValue->matrix[k][argValue->j];
+
+    }
+
     printf("new thread running\n");
     return NULL;
 }
@@ -33,7 +42,7 @@ int main(int argc, char **argv)
 
     pthread_t threads[ MATRIX_SIZE * MATRIX_SIZE ];
 
-    struct task tasklist[ MATRIX_SIZE * MATRIX_SIZE] = { NULL };
+    struct task tasklist[ MATRIX_SIZE * MATRIX_SIZE];
 
 
     for (int i = 0; i < MATRIX_SIZE; i++) {
