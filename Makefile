@@ -7,4 +7,4 @@ all:
 	$(CC) $(CFLAGS) $(DEBUG) $(LINKING) threadProgram.c -o threadProgram
 	$(CC) $(CFLAGS) $(DEBUG) $(LINKING) matrixManyThread.c -o matrixManyThread
 clean:
-	rm -vfr *~ threadProgram
+	rm -vfr *~ threadProgram matrixManyThread
