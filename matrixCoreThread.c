@@ -43,8 +43,6 @@ void *perform_work(void *argument)
                                 (*tmpTask->matrix)[k][tmpTask->j];
       }
     }
-//TODO
-    free(argument);
     return NULL;
 }
 
@@ -64,7 +62,7 @@ int main(int argc, char **argv)
     TaskQueue workQueues[SYS_CORES];
 
     for(int i = 0; i < SYS_CORES; i++) {
-      workQueues[i].taskQueue = (Task**)malloc(sizeof(Task) * (int)((( MATRIX_SIZE * MATRIX_SIZE ) / SYS_CORES ) +1 ));
+      workQueues[i].taskQueue = (Task**)malloc(sizeof(Task*) * (int)((( MATRIX_SIZE * MATRIX_SIZE ) / SYS_CORES ) +1 ));
       workQueues[i].queueLength = 0;
   }
 
@@ -87,12 +85,18 @@ int main(int argc, char **argv)
     for (int i = 0; i < SYS_CORES ; i++) {
         pthread_create(&(threads[i]), NULL, perform_work, &workQueues[i]);
     }
-    //
+
 
     // wait for thread to complete
     // block until thread 'index' completes
     for (int i = 0; i < SYS_CORES ; i++) {
         pthread_join(threads[i], NULL);
+
+        TaskQueue* currentQueue = &workQueues[i];
+        for(int j = 0; j < currentQueue->queueLength; j++){
+          free(currentQueue->taskQueue[j]);
+        }
+        free(currentQueue->taskQueue);
     }
     printMatrix(&resultMatrix);
     exit(EXIT_SUCCESS);
