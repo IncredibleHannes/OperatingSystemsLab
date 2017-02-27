@@ -20,8 +20,8 @@ int main( int argc, char** argv )
   // block until thread 'index' completes
   pthread_join( threads[ 1 ], NULL );
 
-   printf( "In main: All threads completed successfully\n" );
-   exit( EXIT_SUCCESS );
+  printf( "In main: All threads completed successfully\n" );
+  exit( EXIT_SUCCESS );
 }
 
 // Quelle: inspiriert von Wikipedia: https://en.wikipedia.org/wiki/POSIX_Threads

@@ -3,12 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <string.h>
+
+void *memcpy(void *dest, const void *src, size_t n);
 
 #define MATRIX_SIZE 5
 typedef struct task task;
 
 struct task {
-    double matrix[MATRIX_SIZE][MATRIX_SIZE];
+    double (*matrix)[MATRIX_SIZE][MATRIX_SIZE];
     double result;
     int i;
     int j;
@@ -47,10 +50,9 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < MATRIX_SIZE; i++) {
         for (int j = 0; j < MATRIX_SIZE; j++) {
-            task tmp = {.matrix = matrix,  .i = i, .j = j};
-            // tasklist[(i * MATRIX_SIZE) + j].matrix = matrix;
-
-
+            //task tmp = {.matrix = matrix,  .i = i, .j = j};
+            //memcpy(tasklist[(i * MATRIX_SIZE) + j].matrix, matrix, MATRIX_SIZE);
+            tasklist[(i * MATRIX_SIZE) + j].matrix = &matrix;
         }
     }
 
