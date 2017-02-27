@@ -5,31 +5,33 @@
 #include <pthread.h>
 #include <string.h>
 
-void *memcpy(void *dest, const void *src, size_t n);
-
 #define MATRIX_SIZE 5
+
+
+void *memcpy(void *dest, const void *src, size_t n);
+void printMatrix(double (*matrix)[MATRIX_SIZE][MATRIX_SIZE]);
+
 typedef struct task task;
 
 struct task {
     double (*matrix)[MATRIX_SIZE][MATRIX_SIZE];
-    double* result;
+    double *result;
     int i;
     int j;
 };
 
 void *perform_work(void *argument)
 {
-    struct task  *argValue = (struct task *) argument;
+    struct task *argValue = (struct task *) argument;
 
-    argValue->result = 0;
+    (*argValue->result) = 0;
+
     for (int k = 0; k < MATRIX_SIZE; k++) {
-
         (*argValue->result) = (*argValue->result) + (*argValue->matrix)[argValue->i][k] *
-                           (*argValue->matrix)[k][argValue->j];
-
+                              (*argValue->matrix)[k][argValue->j];
     }
 
-    printf("new thread running\n");
+    printf("%f\n",(*argValue->result));
     return NULL;
 }
 
@@ -44,32 +46,50 @@ int main(int argc, char **argv)
         {1, 2, 3, 4, 5}
     };
 
-    double resultMatrix [MATRIX_SIZE][MATRIX_SIZE] = {{0}};
+    double resultMatrix [MATRIX_SIZE][MATRIX_SIZE] = { {0} };
 
+    printMatrix(&resultMatrix);
     pthread_t threads[ MATRIX_SIZE * MATRIX_SIZE ];
 
-    struct task tasklist[ MATRIX_SIZE * MATRIX_SIZE];
 
     for (int i = 0; i < MATRIX_SIZE; i++) {
         for (int j = 0; j < MATRIX_SIZE; j++) {
+            struct task threadTask;
+
             //task tmp = {.matrix = matrix,  .i = i, .j = j};
             //memcpy(tasklist[(i * MATRIX_SIZE) + j].matrix, matrix, MATRIX_SIZE);
-            tasklist[(i * MATRIX_SIZE) + j].matrix = &matrix;
-            tasklist[(i * MATRIX_SIZE) + j].i = i;
-            tasklist[(i * MATRIX_SIZE) + j].j = j;
-            tasklist[(i * MATRIX_SIZE) + j].result = &(resultMatrix[i][j]);
+            threadTask.matrix = &matrix;
+            threadTask.i = i;
+            threadTask.j = j;
+            threadTask.result = &(resultMatrix[i][j]);
+
+
+            pthread_create(&(threads[((i * MATRIX_SIZE) + j)]), NULL, perform_work, &threadTask);
+
         }
     }
 
-
-    //TODO: how many tasks and threads
-
-    pthread_create(&threads[1], NULL, perform_work, NULL);
-
     // wait for thread to complete
     // block until thread 'index' completes
-    pthread_join(threads[ 1 ], NULL);
+    for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++) {
+        pthread_join(threads[ i ], NULL);
+    }
+
+
+    printMatrix(&resultMatrix);
 
     printf("In main: All threads completed successfully\n");
     exit(EXIT_SUCCESS);
+}
+
+
+
+void printMatrix(double (*matrix)[MATRIX_SIZE][MATRIX_SIZE]) {
+
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        for (int j = 0; j < MATRIX_SIZE; j++) {
+            printf("%f, ", (*matrix)[i][j] );
+        }
+        printf("\n");
+    }
 }
