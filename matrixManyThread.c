@@ -12,7 +12,7 @@ typedef struct task task;
 
 struct task {
     double (*matrix)[MATRIX_SIZE][MATRIX_SIZE];
-    double result;
+    double* result;
     int i;
     int j;
 };
@@ -37,23 +37,27 @@ int main(int argc, char **argv)
 {
 
     double matrix[MATRIX_SIZE][MATRIX_SIZE] =
-    {   1, 2, 3, 4, 5,
-        6, 7, 8, 9, 10,
-        1, 2, 3, 4, 5,
-        6, 7, 8, 9, 10,
-        1, 2, 3, 4, 5
+    {   {1, 2, 3, 4, 5},
+        {6, 7, 8, 9, 10},
+        {1, 2, 3, 4, 5},
+        {6, 7, 8, 9, 10},
+        {1, 2, 3, 4, 5}
     };
+
+    double resultMatrix [MATRIX_SIZE][MATRIX_SIZE] = {{0}};
 
     pthread_t threads[ MATRIX_SIZE * MATRIX_SIZE ];
 
     struct task tasklist[ MATRIX_SIZE * MATRIX_SIZE];
-
-
+    
     for (int i = 0; i < MATRIX_SIZE; i++) {
         for (int j = 0; j < MATRIX_SIZE; j++) {
             //task tmp = {.matrix = matrix,  .i = i, .j = j};
             //memcpy(tasklist[(i * MATRIX_SIZE) + j].matrix, matrix, MATRIX_SIZE);
             tasklist[(i * MATRIX_SIZE) + j].matrix = &matrix;
+            tasklist[(i * MATRIX_SIZE) + j].i = i;
+            tasklist[(i * MATRIX_SIZE) + j].j = j;
+            tasklist[(i * MATRIX_SIZE) + j].result = &(resultMatrix[i][j]);
         }
     }
 
