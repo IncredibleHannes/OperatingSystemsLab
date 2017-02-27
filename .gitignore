@@ -35,3 +35,4 @@
 # binary files
 treadProgram
 matrixManyThread
+matrixLineThread
