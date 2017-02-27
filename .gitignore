@@ -33,6 +33,6 @@
 *.su
 
 # binary files
-treadProgram
+threadProgram
 matrixManyThread
 matrixLineThread

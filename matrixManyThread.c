@@ -26,6 +26,7 @@ void *perform_work(void *argument)
         (*argValue->result) = (*argValue->result) + (*argValue->matrix)[argValue->i][k] *
                               (*argValue->matrix)[k][argValue->j];
     }
+    free(argument);
     return NULL;
 }
 
