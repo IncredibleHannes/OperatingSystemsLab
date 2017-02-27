@@ -23,7 +23,7 @@ struct task {
 void *perform_work(void *argument)
 {
     struct task *argValue = (struct task *) argument;
-
+printf("idx : %d , %d  ",   (*argValue).i , (*argValue).j );
     (*argValue->result) = 0;
 
     for (int k = 0; k < MATRIX_SIZE; k++) {
@@ -46,7 +46,12 @@ int main(int argc, char **argv)
         {1, 2, 3, 4, 5}
     };
 
-    double resultMatrix [MATRIX_SIZE][MATRIX_SIZE] = { {0} };
+    double resultMatrix [MATRIX_SIZE][MATRIX_SIZE] =  {   {1, 2, 3, 4, 5},
+          {6, 7, 8, 9, 10},
+          {1, 2, 3, 4, 5},
+          {6, 7, 8, 9, 10},
+          {1, 2, 3, 4, 5}
+      };
 
     printMatrix(&resultMatrix);
     pthread_t threads[ MATRIX_SIZE * MATRIX_SIZE ];
@@ -54,7 +59,7 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < MATRIX_SIZE; i++) {
         for (int j = 0; j < MATRIX_SIZE; j++) {
-            struct task threadTask;
+            struct task threadTask ;//= malloc();
 
             //task tmp = {.matrix = matrix,  .i = i, .j = j};
             //memcpy(tasklist[(i * MATRIX_SIZE) + j].matrix, matrix, MATRIX_SIZE);
@@ -62,7 +67,6 @@ int main(int argc, char **argv)
             threadTask.i = i;
             threadTask.j = j;
             threadTask.result = &(resultMatrix[i][j]);
-
 
             pthread_create(&(threads[((i * MATRIX_SIZE) + j)]), NULL, perform_work, &threadTask);
 
