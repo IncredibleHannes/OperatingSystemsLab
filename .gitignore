@@ -36,3 +36,4 @@
 threadProgram
 matrixManyThread
 matrixLineThread
+matrixCoreThread
