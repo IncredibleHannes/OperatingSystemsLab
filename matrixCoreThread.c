@@ -21,35 +21,29 @@ struct task {
     int j;
 };
 
-struct taskQueue{
+struct taskQueue {
     Task **taskQueue;
     int queueLength;
 };
-
-
-
-
 
 void *perform_work(void *argument)
 {
     TaskQueue *argValue = (TaskQueue *) argument;
 
-    for(int l = 0; l < argValue->queueLength; l++) {
-      Task *tmpTask = argValue->taskQueue[l];
-      (*tmpTask->result) = 0;
+    for (int l = 0; l < argValue->queueLength; l++) {
+        Task *tmpTask = argValue->taskQueue[l];
+        (*tmpTask->result) = 0;
 
-      for (int k = 0; k < MATRIX_SIZE; k++) {
-          (*tmpTask->result) = (*tmpTask->result) + (*tmpTask->matrix)[tmpTask->i][k] *
-                                (*tmpTask->matrix)[k][tmpTask->j];
-      }
+        for (int k = 0; k < MATRIX_SIZE; k++) {
+            (*tmpTask->result) = (*tmpTask->result) + (*tmpTask->matrix)[tmpTask->i][k] *
+                                 (*tmpTask->matrix)[k][tmpTask->j];
+        }
     }
     return NULL;
 }
 
 int main(int argc, char **argv)
 {
-
-
     double matrix[MATRIX_SIZE][MATRIX_SIZE] =
     {   {1, 2, 3, 4, 5},
         {6, 7, 8, 9, 10},
@@ -61,10 +55,11 @@ int main(int argc, char **argv)
     double resultMatrix [MATRIX_SIZE][MATRIX_SIZE] =  {{0}};
     TaskQueue workQueues[SYS_CORES];
 
-    for(int i = 0; i < SYS_CORES; i++) {
-      workQueues[i].taskQueue = (Task**)malloc(sizeof(Task*) * (int)((( MATRIX_SIZE * MATRIX_SIZE ) / SYS_CORES ) +1 ));
-      workQueues[i].queueLength = 0;
-  }
+    for (int i = 0; i < SYS_CORES; i++) {
+        workQueues[i].taskQueue = (Task **)malloc(sizeof(Task *) * (int)(((MATRIX_SIZE * MATRIX_SIZE) /
+                                  SYS_CORES) + 1));
+        workQueues[i].queueLength = 0;
+    }
 
     pthread_t threads[ SYS_CORES ];
     for (int i = 0; i < MATRIX_SIZE; i++) {
@@ -75,7 +70,7 @@ int main(int argc, char **argv)
             threadTask->j = j;
             threadTask->result = &(resultMatrix[i][j]);
 
-            TaskQueue* currentQueue = &workQueues[((i*MATRIX_SIZE) + j) % SYS_CORES];
+            TaskQueue *currentQueue = &workQueues[((i * MATRIX_SIZE) + j) % SYS_CORES];
             currentQueue->taskQueue[currentQueue->queueLength] = threadTask;
             currentQueue->queueLength++;
 
@@ -85,24 +80,20 @@ int main(int argc, char **argv)
     for (int i = 0; i < SYS_CORES ; i++) {
         pthread_create(&(threads[i]), NULL, perform_work, &workQueues[i]);
     }
-
-
     // wait for thread to complete
     // block until thread 'index' completes
     for (int i = 0; i < SYS_CORES ; i++) {
         pthread_join(threads[i], NULL);
 
-        TaskQueue* currentQueue = &workQueues[i];
-        for(int j = 0; j < currentQueue->queueLength; j++){
-          free(currentQueue->taskQueue[j]);
+        TaskQueue *currentQueue = &workQueues[i];
+        for (int j = 0; j < currentQueue->queueLength; j++) {
+            free(currentQueue->taskQueue[j]);
         }
         free(currentQueue->taskQueue);
     }
     printMatrix(&resultMatrix);
     exit(EXIT_SUCCESS);
 }
-
-
 
 void printMatrix(double (*matrix)[MATRIX_SIZE][MATRIX_SIZE])
 {
