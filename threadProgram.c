@@ -5,6 +5,24 @@
 #include <pthread.h>
 
 
-int main(int argc, char **argv)
+void* perform_work( void* argument )
 {
+  printf("new thread running");
+  return NULL;
 }
+
+int main( int argc, char** argv )
+{
+  pthread_t threads[ 1 ];
+  int thread_args[ 1 ];
+  pthread_create( &threads[1], NULL, perform_work, NULL );
+
+  // wait for thread to complete
+  // block until thread 'index' completes
+  pthread_join( threads[ 1 ], NULL );
+
+   printf( "In main: All threads completed successfully\n" );
+   exit( EXIT_SUCCESS );
+}
+
+// Quelle: inspiriert von Wikipedia: https://en.wikipedia.org/wiki/POSIX_Threads
