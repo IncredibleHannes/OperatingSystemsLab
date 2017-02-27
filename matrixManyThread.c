@@ -24,7 +24,7 @@ void *perform_work(void *argument)
     argValue->result = 0;
     for(int k = 0; k < MATRIX_SIZE; k++){
 
-          argValue->result = argValue->result + argValue->matrix[argValue->i][k] *  argValue->matrix[k][argValue->j];
+          argValue->result = argValue->result + (*argValue->matrix)[argValue->i][k] *  (*argValue->matrix)[k][argValue->j];
 
     }
 
