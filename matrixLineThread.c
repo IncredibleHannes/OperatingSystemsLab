@@ -20,12 +20,11 @@ struct task {
 void *perform_work(void *argument)
 {
     struct task *argValue = (struct task *) argument;
-    (*argValue->result)[argValue->i] = 0;
 
     for (int j = 0; j < MATRIX_SIZE; j++) {
-        (*argValue->result)[argValue->i] = 0;
+        (*argValue->result)[j] = 0;
         for (int k = 0; k < MATRIX_SIZE; k++) {
-            (*argValue->result)[argValue->i] =(*argValue->result)[argValue->i] + (*argValue->matrix)[argValue->i][k] *
+            (*argValue->result)[j] =(*argValue->result)[j] + (*argValue->matrix)[argValue->i][k] *
                                   (*argValue->matrix)[k][j];
         }
     }
