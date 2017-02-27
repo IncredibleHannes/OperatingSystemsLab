@@ -7,14 +7,13 @@
 
 void* perform_work( void* argument )
 {
-  printf("new thread running");
+  printf("new thread running\n");
   return NULL;
 }
 
 int main( int argc, char** argv )
 {
   pthread_t threads[ 1 ];
-  int thread_args[ 1 ];
   pthread_create( &threads[1], NULL, perform_work, NULL );
 
   // wait for thread to complete
