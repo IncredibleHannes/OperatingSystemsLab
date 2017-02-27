@@ -4,24 +4,20 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-
-void* perform_work( void* argument )
+void *perform_work(void *argument)
 {
-  printf("new thread running\n");
-  return NULL;
+    printf("new thread running\n");
+    return NULL;
 }
 
-int main( int argc, char** argv )
+int main(int argc, char **argv)
 {
-  pthread_t threads[ 1 ];
-  pthread_create( &threads[1], NULL, perform_work, NULL );
+    pthread_t threads;
+    pthread_create(&threads, NULL, perform_work, NULL);
 
-  // wait for thread to complete
-  // block until thread 'index' completes
-  pthread_join( threads[ 1 ], NULL );
+    // wait for thread to complete
+    pthread_join(threads, NULL);
 
-  printf( "In main: All threads completed successfully\n" );
-  exit( EXIT_SUCCESS );
+    printf("Thread completed successfully\n");
+    exit(EXIT_SUCCESS);
 }
-
-// Quelle: inspiriert von Wikipedia: https://en.wikipedia.org/wiki/POSIX_Threads
