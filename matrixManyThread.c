@@ -8,7 +8,7 @@
 
 void printMatrix(double (*matrix)[MATRIX_SIZE][MATRIX_SIZE]);
 
-typedef struct task task;
+typedef struct task Task;
 
 struct task {
     double (*matrix)[MATRIX_SIZE][MATRIX_SIZE];
@@ -19,7 +19,7 @@ struct task {
 
 void *perform_work(void *argument)
 {
-    struct task *argValue = (struct task *) argument;
+    Task *argValue = (Task *) argument;
     (*argValue->result) = 0;
 
     for (int k = 0; k < MATRIX_SIZE; k++) {
@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     pthread_t threads[ MATRIX_SIZE * MATRIX_SIZE ];
     for (int i = 0; i < MATRIX_SIZE; i++) {
         for (int j = 0; j < MATRIX_SIZE; j++) {
-            struct task *threadTask = (struct task *) malloc(sizeof(struct task));
+            Task *threadTask = (Task *) malloc(sizeof(Task));
             threadTask->matrix = &matrix;
             threadTask->i = i;
             threadTask->j = j;
