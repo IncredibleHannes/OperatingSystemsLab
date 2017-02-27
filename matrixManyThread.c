@@ -58,7 +58,7 @@ int main(int argc, char **argv)
     // wait for thread to complete
     // block until thread 'index' completes
     for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++) {
-        pthread_join(threads[ i ], NULL);
+        pthread_join(threads[i], NULL);
     }
     printMatrix(&resultMatrix);
     exit(EXIT_SUCCESS);
