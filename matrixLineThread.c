@@ -49,19 +49,18 @@ int main(int argc, char **argv)
 
     pthread_t threads[ MATRIX_SIZE ];
     for (int i = 0; i < MATRIX_SIZE; i++) {
-        for (int j = 0; j < MATRIX_SIZE; j++) {
             struct task *threadTask = (struct task *) malloc(sizeof(struct task));
             threadTask->matrix = &matrix;
             threadTask->i = i;
             threadTask->result = &(resultMatrix[i]);
 
             pthread_create(&(threads[i]), NULL, perform_work, threadTask);
-        }
+
     }
 
     // wait for thread to complete
     // block until thread 'index' completes
-    for (int i = 0; i < MATRIX_SIZE * MATRIX_SIZE; i++) {
+    for (int i = 0; i < MATRIX_SIZE ; i++) {
         pthread_join(threads[i], NULL);
     }
     printMatrix(&resultMatrix);
