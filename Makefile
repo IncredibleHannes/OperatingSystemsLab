@@ -11,12 +11,12 @@ OBJ = my_mutex.o test_my_mutex.o test_mutex.o
 	  $(CC) $(CFLAGS) -c -o $@ $<
 
 all:# $(OBJ)
-	gcc -c mutex.c
-	gcc -std=c99 test_mutex.c -o test_mutex.o -lpthread mutex.o tsl.o
+	gcc -std=c99 -O0 -g -c mutex.c
+	gcc -std=c99 -O0 -g test_mutex.c -o test_mutex.o -lpthread mutex.o tsl.o
 
 	as my_tsl.s -o my_tsl.o
 	gcc -c my_mutex.c
-	gcc -std=c99 test_my_mutex.c -o test_my_mutex.o -lpthread my_mutex.o my_tsl.o
+	gcc -std=c99 -O0 -g test_my_mutex.c -o test_my_mutex.o -lpthread my_mutex.o my_tsl.o
 #	$(CC) -O2 -S test.c -o test.s
 #	$(CC) $(CFLAGS) $(DEBUG) $(LINKING) -c mutex.c tsl.o
 #	$(CC) $(CFLAGS) $(DEBUG) $(LINKING) test_mutex.c -o test_mutex mutex.o
