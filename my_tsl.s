@@ -12,7 +12,7 @@ tsl:
 xor %eax, %eax
 inc %eax
 lock xchg %eax, (%rdi)
-retq
+ret
 .cfi_endproc
 .LFE0:
 .size	test, .-test
