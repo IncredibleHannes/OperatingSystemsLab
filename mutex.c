@@ -1,7 +1,12 @@
 #include "mutex"
 //Johannes Hartmann, Jonas Einig
 
-int main(int argc, char **argv)
+void mutex_lock()
+{
+    while(tsl(*adr) == 1);
+}
+
+void mutex_unlock()
 {
 
 }
