@@ -3,7 +3,7 @@
 
 void mutex_lock(unsigned char *adr)
 {
-    while(tsl(adr) == 1);
+    while (tsl(adr) == 1);
 }
 
 void mutex_unlock(unsigned char *adr)
