@@ -2,6 +2,6 @@
 //Johannes Hartmann, Jonas Einig
 #include <stdio.h>
 #include <stdlib.h>
-#include "my_mutex.h"
+#include "mutex.h"
 
 int main(int argc, char **argv);
