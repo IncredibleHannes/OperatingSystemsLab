@@ -15,4 +15,4 @@ all: $(OBJ)
 
 
 clean:
-	rm -vfr *~ *.o test.s
+	rm -vfr *~ $(OBJ) test.s
