@@ -4,5 +4,6 @@
 #include <stdlib.h>
 #include "tsl.o"
 
-void mutex_lock();
-void mutex_unlock();
+int tsl(unsigned char *adr);
+void mutex_lock(unsigned char *adr);
+void mutex_unlock(unsigned char *adr);
