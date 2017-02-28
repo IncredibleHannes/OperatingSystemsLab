@@ -24,9 +24,7 @@ tsl:
 	$(CC) $(CFLAGS) $(DEBUG) test_mutex.c -o test_mutex $(LINKING) mutex.o tsl.o
 
 mytsl:
-ifeq ($(OS), Ubuntu)
 	as my_tsl.s -o my_tsl.o
-endif
 	$(CC) $(CFLAGS) $(DEBUG) -c my_mutex.c
 	$(CC) $(CFLAGS) $(DEBUG) test_my_mutex.c -o test_my_mutex $(LINKING) my_mutex.o my_tsl.o
 
