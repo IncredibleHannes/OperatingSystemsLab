@@ -9,11 +9,10 @@
 tsl:
 .LFB0:
 .cfi_startproc
-movzbl	(%rdi), %eax
-movl $1, %ebx
-lock xchg %eax, %ebx
-movb	%bl, (%rdi)
-ret
+xor %eax, %eax
+inc %eax
+lock xchg %eax, (%rdi)
+retq
 .cfi_endproc
 .LFE0:
 .size	test, .-test
