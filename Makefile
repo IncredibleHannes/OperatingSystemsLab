@@ -8,9 +8,9 @@ LINKING=-lpthread
 
 OS := $(shell uname)
 ifeq ($(OS), Ubuntu)
-OBJ = my_mutex.o test_my_mutex test_mutex mutex.o my_tsl.o
-else
 OBJ = my_mutex.o test_my_mutex test_mutex mutex.o
+else
+OBJ = my_mutex.o test_my_mutex test_mutex mutex.o my_tsl.o
 endif
 
 
