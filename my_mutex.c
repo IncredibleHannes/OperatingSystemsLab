@@ -1,4 +1,4 @@
-#include "my_mutex"
+#include "my_mutex.h"
 //Johannes Hartmann, Jonas Einig
 
 int main(int argc, char **argv)

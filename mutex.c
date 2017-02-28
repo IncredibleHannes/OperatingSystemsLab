@@ -1,4 +1,4 @@
-#include "mutex"
+#include "mutex.h"
 //Johannes Hartmann, Jonas Einig
 
 void mutex_lock()
