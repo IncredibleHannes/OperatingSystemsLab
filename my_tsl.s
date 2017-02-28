@@ -10,12 +10,9 @@ tsl:
 .LFB0:
 .cfi_startproc
 movzbl	(%rdi), %eax
-testb	%al, %al
-je	.L2
-addl	$1, %eax
-movb	%al, (%rdi)
-.L2:
-xorl	%eax, %eax
+movl $1, %ebx
+lock xchg %eax, %ebx
+movb	%bl, (%rdi)
 ret
 .cfi_endproc
 .LFE0:

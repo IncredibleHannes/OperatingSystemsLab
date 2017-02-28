@@ -1,7 +1,12 @@
-#include "my_mutex.h"
+#include "mutex.h"
 //Johannes Hartmann, Jonas Einig
 
-int main(int argc, char **argv)
+void mutex_lock(unsigned char *adr)
 {
+    while(tsl(adr) == 1);
+}
 
+void mutex_unlock(unsigned char *adr)
+{
+    *adr = 0;
 }
