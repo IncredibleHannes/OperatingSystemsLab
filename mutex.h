@@ -2,5 +2,7 @@
 //Johannes Hartmann, Jonas Einig
 #include <stdio.h>
 #include <stdlib.h>
+#include "tsl.o"
 
-int main(int argc, char **argv);
+void mutex_lock();
+void mutex_unlock();
