@@ -22,7 +22,8 @@ int main(int argc, char **argv)
     pthread_join(thread1, NULL);
     pthread_join(thread2, NULL);
 
-    printf("Thread completed successfully with critical resorce: %d\n", threadArguments->criticalResorce);
+    printf("Thread completed successfully with critical resorce: %d\n",
+           threadArguments->criticalResorce);
     free(threadArguments->mutex);
     exit(EXIT_SUCCESS);
 }
@@ -31,12 +32,12 @@ void *perform_work(void *argument)
 {
     ThreadArguments *threadArguments = (ThreadArguments *) argument;
     mutex_lock(threadArguments->mutex);
-    if(threadArguments->criticalResorce == 0){
-      sleep(1);
-      threadArguments->criticalResorce = threadArguments->criticalResorce + 1 ;
-      printf("addet +1\n");
+    if (threadArguments->criticalResorce == 0) {
+        sleep(1);
+        threadArguments->criticalResorce = threadArguments->criticalResorce + 1 ;
+        printf("addet +1\n");
     } else {
-      printf("done noting!\n");
+        printf("done noting!\n");
     }
     mutex_unlock(threadArguments->mutex);
     return NULL;
