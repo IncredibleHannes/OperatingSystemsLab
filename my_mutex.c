@@ -1,4 +1,4 @@
-#include "mutex.h"
+#include "my_mutex.h"
 //Johannes Hartmann, Jonas Einig
 
 void mutex_lock(unsigned char *adr)
