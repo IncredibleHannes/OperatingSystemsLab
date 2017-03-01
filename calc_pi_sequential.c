@@ -23,7 +23,12 @@ void getparams(int argc, char **argv, int *iterations)
 {
     if (argc == 2 && isNumber(argv[1])) {
         *iterations = atoi(argv[1]);
+        if (*iterations > 1 ){
+          return;
+        }
     }
+    fprintf(stderr,  "Insert a number greater 1!\n");
+    exit(EXIT_FAILURE);
 }
 
 int isNumber(char *number)
@@ -40,16 +45,17 @@ int isNumber(char *number)
 void calculatePi(int iterations)
 {
     double oneStep = 1.0 / iterations;
-    double values = 0;
-    for (int i = 0; i < iterations; i++) {
-        values = values + (sqrt(1 - (i * oneStep) *  (i * oneStep)) * oneStep);
-
+    double lowbound = 0;
+    double higherbound = 0;
+    for (int i = 1; i <= iterations; i++) {
+        if(i < iterations){
+          lowbound = lowbound + (sqrt(1 - pow(i * oneStep, 2)) * oneStep);
+        }
+        higherbound = higherbound + (sqrt(1 - pow((i - 1) * oneStep, 2)) * oneStep);
     }
 
-    double pi = (values + oneStep / 2) * 4;
-    double lowbound = values * 4;
-    double highbound = ((values + oneStep) * 4);
-    printf("Lower Bound: %.12f\n", lowbound );
-    printf("Upper Bound: %.12f\n", highbound);
-    printf("%f\n", pi);
+    lowbound = lowbound * 4;
+    higherbound = higherbound * 4;
+    printf("Lower Bound: %.12f\n", lowbound);
+    printf("Upper Bound: %.12f\n", higherbound);
 }
