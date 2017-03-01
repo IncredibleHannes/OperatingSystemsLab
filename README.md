@@ -16,13 +16,13 @@ Johannes Hartmann & Jonas Einig
 
 
 ### critical
-Da die Threads warten müssen, bis der Zugriff auf die Variable erlaubt wird, finden die Berechnungen nicht paralell statt. Dadurch gibt es keinen Vorteil gegenüber der sequentiellen Berechnung. Mit den critical-Anweisungen wird sogar mehr Zeit benötigt, da ein großer Overhead wegen des Schedulen der Threads existiert.
+Da die Threads warten müssen, bis der Zugriff auf die Variable erlaubt wird, finden die Berechnungen nicht parallel statt. Dadurch gibt es keinen Vorteil gegenüber der sequentiellen Berechnung. Mit den critical-Anweisungen wird sogar mehr Zeit benötigt, da ein großer Overhead wegen des Schedulen der Threads existiert.
 
 ### atomic
 Hier tritt das selbe Problem auf wie bei critical. Jedoch bekommt der Compiler bei atomic-Anweisungen mehr Freiheiten und Möglichkeiten zur Optimierung. So werden hier bessere Laufzeiten erreicht.
 
 ### reduction
-Durch die Reduktion können die Berechnungen echt paralell ausgeführt werden.
+Durch die Reduktion können die Berechnungen echt parallel ausgeführt werden.
 Für jedes i wird die Berechnung ausgeführt und das Ergebnis in eine Liste geschrieben. Nach der Berechnung werden einfach die Listenelemente addiert.
 
 ## 7.4
