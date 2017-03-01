@@ -34,3 +34,6 @@
 
 # binary
 calc_pi_sequential
+calc_pi_critical
+calc_pi_atomic
+calc_pi_reduction
