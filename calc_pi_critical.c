@@ -54,12 +54,12 @@ void calculatePi(int iterations)
         if (i < iterations) {
             #pragma omp critical(lowbound)
             {
-                lowbound = lowbound + (sqrt(1 - pow(i * oneStep, 2)) * oneStep);
+                lowbound += (sqrt(1 - pow(i * oneStep, 2)) * oneStep);
             }
         }
         #pragma omp critical(higherbound)
         {
-            higherbound = higherbound + (sqrt(1 - pow((i - 1) * oneStep, 2)) * oneStep);
+            higherbound += (sqrt(1 - pow((i - 1) * oneStep, 2)) * oneStep);
         }
     }
 

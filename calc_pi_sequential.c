@@ -49,9 +49,9 @@ void calculatePi(int iterations)
     double higherbound = 0;
     for (int i = 1; i <= iterations; i++) {
         if (i < iterations) {
-            lowbound = lowbound + (sqrt(1 - pow(i * oneStep, 2)) * oneStep);
+            lowbound += (sqrt(1 - pow(i * oneStep, 2)) * oneStep);
         }
-        higherbound = higherbound + (sqrt(1 - pow((i - 1) * oneStep, 2)) * oneStep);
+        higherbound += (sqrt(1 - pow((i - 1) * oneStep, 2)) * oneStep);
     }
 
     lowbound = lowbound * 4;
