@@ -39,16 +39,17 @@ int isNumber(char *number)
 
 void calculatePi(int iterations)
 {
-    double oneStep = 1 / iterations;
+    double oneStep = 1.0 / iterations;
     double values = 0;
     for (int i = 0; i < iterations; i++) {
-        values = values + sqrt(1 - (i * oneStep) *  (i * oneStep)) * oneStep;
+        values = values + (sqrt(1 - (i * oneStep) *  (i * oneStep)) * oneStep);
+
     }
 
     double pi = (values + oneStep / 2) * 4;
     double lowbound = values * 4;
     double highbound = ((values + oneStep) * 4);
-    printf("lowbound: %f", lowbound );
-    printf("highbound: %f", highbound);
-    printf("%f", pi);
+    printf("Lower Bound: %.12f\n", lowbound );
+    printf("Upper Bound: %.12f\n", highbound);
+    printf("%f\n", pi);
 }
