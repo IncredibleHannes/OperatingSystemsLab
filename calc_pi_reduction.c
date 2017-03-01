@@ -6,6 +6,7 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <math.h>
+#include <omp.h>
 
 void getparams(int argc, char **argv, int *iterations);
 int isNumber(char *number);
@@ -23,7 +24,7 @@ void getparams(int argc, char **argv, int *iterations)
 {
     if (argc == 2 && isNumber(argv[1])) {
         *iterations = atoi(argv[1]);
-        if (*iterations > 1) {
+        if (*iterations >= 1) {
             return;
         }
     }
@@ -47,11 +48,16 @@ void calculatePi(int iterations)
     double oneStep = 1.0 / iterations;
     double lowbound = 0;
     double higherbound = 0;
-    for (int i = 1; i <= iterations; i++) {
+    int i;
+    #pragma omp parallel for      \
+      default(shared) private(i)  \
+      reduction(+:lowbound)       \
+      reduction(+:higherbound)
+    for (i = 1; i <= iterations; i++) {
         if (i < iterations) {
-            lowbound = lowbound + (sqrt(1 - pow(i * oneStep, 2)) * oneStep);
+            lowbound += (sqrt(1 - pow(i * oneStep, 2)) * oneStep);
         }
-        higherbound = higherbound + (sqrt(1 - pow((i - 1) * oneStep, 2)) * oneStep);
+        higherbound += (sqrt(1 - pow((i - 1) * oneStep, 2)) * oneStep);
     }
 
     lowbound = lowbound * 4;
