@@ -26,23 +26,25 @@ volatile int receiverReady = 0;
 int main(int argc, char **argv)
 {
     if ((pid = fork()) < 0) {
-        error("should not happen");
+        error("Failed to fork child");
     } else if (pid == 0) {
         /* Kindprozess */
         if (signal(SIGUSR1, senderSignalHandler) == SIG_ERR)
             error("Fehler beim setzen der Signalhandler");
-        pid_t parentid = getppid();
 
+        //read from console
         char *input = (char *) malloc(sizeof(char) * 101);
         while (receiverReady == 0);
         printf("Bitte geben Sie eine Zeichenkette < 100 Zeichen ein:\n");
         if (fgets(input, 100, stdin) == NULL)
             error("Fehler beim lesen des Inputs");
+
+        //send string to parent
+        pid_t parentid = getppid();
         for (int i = 0; i < 100; i++) {
             sendChar(input[i], parentid);
-            if (input[i] == '\0') {
+            if (input[i] == '\0') //reached end of input --> break;
                 break;
-            }
         }
     } else {
         /* Elternprozess */
@@ -50,13 +52,13 @@ int main(int argc, char **argv)
             error("Fehler beim setzen der Signalhandler");
         if (signal(SIGUSR2, reciverSignalHandler) == SIG_ERR)
             error("Fehler beim setzen der Signalhandler");
-        // give the child process some time to make signalhandler ;) 
-        sleep(0.1);
-        if (kill(pid, SIGUSR1) < 0)
-            error("Fehler beim senden von der bereitschaft");
-        while (finished == 0);
-        printf("Received result %s", resultString);
 
+        // give the child process some time to make signalhandler ;)
+        sleep(0.1);
+        if (kill(pid, SIGUSR1) < 0) //send initial ack
+            error("Fehler beim senden der Bereitschaft");
+        while (finished == 0); //wait untill the sending is done
+        printf("Received result: %s", resultString);
     }
 }
 
@@ -65,19 +67,14 @@ void sendChar(char input, pid_t parentid)
     for (int i = 0; i < 8; i++) {
         // wait for ack
         while (receiverReady == 0);
-
-        if (input & 1) {
-            sendBit(1, parentid);
-        } else {
-            sendBit(0, parentid);
-        }
-        input = input >> 1;
+        //send i-th Bit ( counted from end ) to parent
+        sendBit(input & (1<<i), parentid);
     }
 }
 
 void senderSignalHandler(int sigNumber)
 {
-    if (sigNumber == SIGUSR1) {
+    if (sigNumber == SIGUSR1) { //ack received
         receiverReady = 1;
     } else
         error("Fehler beim empfangen der Signale");
@@ -87,27 +84,28 @@ void senderSignalHandler(int sigNumber)
 
 void reciverSignalHandler(int sigNumber)
 {
-    if (sigNumber == SIGUSR1) {
+    if (sigNumber == SIGUSR1) { //0-Bit received --> dont change char received only increment
         signalcount ++;
-        if (signal(SIGUSR1, reciverSignalHandler) == SIG_ERR)
+        if (signal(SIGUSR1, reciverSignalHandler) == SIG_ERR) //register handler
             error("Fehler beim setzen der Signalhandler");
-    } else if (sigNumber == SIGUSR2) {
-        received = received | 1 << (signalcount % 8);
+    } else if (sigNumber == SIGUSR2) { //1-BIT received
+        received = received | 1 << (signalcount % 8); //put it into the right position
         signalcount ++;
-        if (signal(SIGUSR2, reciverSignalHandler) == SIG_ERR)
+        if (signal(SIGUSR2, reciverSignalHandler) == SIG_ERR)//register handler
             error("Fehler beim setzen der Signalhandler");
     } else
         error("Fehler beim empfangen der Signale");
 
 
-    if ((signalcount % 8) == 0) {
-        if (received == '\0') {
+    if ((signalcount % 8) == 0) {//if full byte received
+        if (received == '\0') { //if final byte received break the waiting in main
             finished = 1;
         }
+        //save to right spot
         resultString[div(signalcount, 8).quot - 1] = received;
-        received = '\0';
+        received = '\0'; //reset
     }
-    if (kill(pid, SIGUSR1) < 0)
+    if (kill(pid, SIGUSR1) < 0) //send ack
         error("Fehler beim senden von der bereitschaft");
 }
 
