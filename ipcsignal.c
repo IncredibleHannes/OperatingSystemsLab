@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         }
         while (finished == 0);
         printf("Received result %s", resultString);
-        
+
     }
 }
 
