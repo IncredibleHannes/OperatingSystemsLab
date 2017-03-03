@@ -54,7 +54,7 @@ int main(int argc, char **argv)
             error("Fehler beim setzen der Signalhandler");
 
         // give the child process some time to make signalhandler ;)
-        sleep(0.1);
+        sleep(1);
         if (kill(pid, SIGUSR1) < 0) //send initial ack
             error("Fehler beim senden der Bereitschaft");
         while (finished == 0); //wait untill the sending is done
